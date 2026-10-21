@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/user_provider.dart';
 
@@ -24,7 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_initialized) {
-      final user = UserProvider.of(context).user;
+      final user = context.read<UserProvider>().user;
       _nameController.text = user.name;
       _emailController.text = user.email;
       _initialized = true;
@@ -42,13 +43,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _saveProfile() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final provider = UserProvider.of(context);
+    final provider = context.read<UserProvider>();
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
     final emailKey = email.toLowerCase();
 
-    // Latihan 5: simulasi cek email sudah digunakan.
-    // 'registered_emails' = daftar semua email yang pernah didaftarkan.
+    // Latihan 5: simulasi cek email sudah digunakan
     final prefs = await SharedPreferences.getInstance();
     final registered =
         List<String>.from(prefs.getStringList('registered_emails') ?? []);
@@ -87,12 +87,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _addFavorite() {
     final text = _favController.text.trim();
     if (text.isEmpty) return;
-    UserProvider.of(context).addFavorite(text);
+    context.read<UserProvider>().addFavorite(text);
     _favController.clear();
   }
 
   void _logout() {
-    final provider = UserProvider.of(context);
+    final provider = context.read<UserProvider>();
 
     showDialog(
       context: context,
@@ -119,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = UserProvider.of(context);
+    final provider = context.watch<UserProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -170,7 +170,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               if (value == null || value.trim().isEmpty) {
                                 return 'Nama tidak boleh kosong';
                               }
-                              // Latihan 5: tolak karakter berbahaya
                               if (_dangerous.hasMatch(value)) {
                                 return 'Nama mengandung karakter tidak diizinkan';
                               }

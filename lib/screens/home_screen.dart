@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../providers/user_provider.dart';
 import 'profile_screen.dart';
 
@@ -7,7 +8,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = UserProvider.of(context);
+    final provider = context.watch<UserProvider>();
     final loggedIn = provider.user.isLoggedIn;
 
     return Scaffold(
@@ -16,7 +17,6 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
         actions: [
-          // Latihan 1: tombol toggle tema
           IconButton(
             icon: Icon(
               provider.isDarkMode ? Icons.light_mode : Icons.dark_mode,
@@ -67,7 +67,6 @@ class HomeScreen extends StatelessWidget {
                       label: Text(loggedIn ? 'Lihat Profil' : 'Login / Daftar'),
                     ),
                     const SizedBox(height: 32),
-                    // Latihan 2: tampilkan counter kunjungan
                     Text(
                       'Aplikasi sudah dibuka ${provider.visitCount} kali',
                       style: const TextStyle(fontSize: 12, color: Colors.grey),
