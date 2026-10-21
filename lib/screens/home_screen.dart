@@ -8,12 +8,23 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = UserProvider.of(context);
+    final loggedIn = provider.user.isLoggedIn;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
+        actions: [
+          // Latihan 1: tombol toggle tema
+          IconButton(
+            icon: Icon(
+              provider.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+            ),
+            tooltip: 'Ganti tema',
+            onPressed: provider.toggleTheme,
+          ),
+        ],
       ),
       body: provider.isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -23,14 +34,10 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.home,
-                      size: 80,
-                      color: Colors.deepPurple,
-                    ),
+                    const Icon(Icons.home, size: 80, color: Colors.deepPurple),
                     const SizedBox(height: 24),
                     Text(
-                      provider.user.isLoggedIn
+                      loggedIn
                           ? 'Selamat datang, ${provider.user.name}!'
                           : 'Selamat datang, Tamu!',
                       style: const TextStyle(
@@ -40,41 +47,31 @@ class HomeScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
-                    if (provider.user.isLoggedIn) ...[
+                    if (loggedIn) ...[
                       Text(
                         'Email: ${provider.user.email}',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
+                        style: const TextStyle(fontSize: 14, color: Colors.grey),
                       ),
                       const SizedBox(height: 24),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ProfileScreen(),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.person),
-                        label: const Text('Lihat Profil'),
-                      ),
-                    ] else ...[
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ProfileScreen(),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.login),
-                        label: const Text('Login / Daftar'),
-                      ),
                     ],
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ProfileScreen(),
+                          ),
+                        );
+                      },
+                      icon: Icon(loggedIn ? Icons.person : Icons.login),
+                      label: Text(loggedIn ? 'Lihat Profil' : 'Login / Daftar'),
+                    ),
+                    const SizedBox(height: 32),
+                    // Latihan 2: tampilkan counter kunjungan
+                    Text(
+                      'Aplikasi sudah dibuka ${provider.visitCount} kali',
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
                   ],
                 ),
               ),
